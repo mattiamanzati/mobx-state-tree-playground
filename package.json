@@ -1,6 +1,6 @@
 {
   "name": "mobx-state-tree-playground",
-  "homepage": "mattiamanzati.github.io",
+  "homepage": "https://mattiamanzati.github.io/mobx-state-tree-playground/build/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
