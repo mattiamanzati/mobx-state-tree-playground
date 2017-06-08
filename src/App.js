@@ -1,11 +1,12 @@
 import React, { Component } from "react";
 import MonacoEditor from "react-monaco-editor";
 import { observer } from "mobx-react";
-import { transpile, runCode } from "./run";
+import { runCode } from "./run";
 
 class App extends Component {
   editor = null;
   viewer = null;
+  state = { preview: null };
 
   resize = () => {
     if (this.editor) {
@@ -21,6 +22,24 @@ class App extends Component {
     this.resize();
   };
 
+  editorWillMount = monaco => {
+    monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
+      noSemanticValidation: true,
+      noSyntaxValidation: true // This line disables errors in jsx tags like <div>, etc.
+    });
+
+    // I don't think the following makes any difference
+    monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
+      // jsx: 'react',
+      jsx: monaco.languages.typescript.JsxEmit.React,
+      jsxFactory: "React.createElement",
+      reactNamespace: "React",
+      allowNonTsExtensions: true,
+      allowJs: true,
+      target: monaco.languages.typescript.ScriptTarget.Latest
+    });
+  };
+
   viewerDidMount = (editor, monaco) => {
     this.viewer = editor;
     this.resize();
@@ -28,7 +47,12 @@ class App extends Component {
 
   componentDidMount() {
     window.onresize = this.resize;
+    runCode(this.props.store, this.sandboxRender);
   }
+
+  sandboxRender = element => {
+    this.setState({ preview: element });
+  };
 
   render() {
     const { store } = this.props;
@@ -36,35 +60,47 @@ class App extends Component {
       <div className="playground">
         <div className="toolbar">
           <div className="buttons run-code">
-            <a href="#" onClick={() => runCode(store)}>
+            <a href="#" onClick={() => runCode(store, this.sandboxRender)}>
               Run ►
             </a>
-            <a href={"#" + store.shareUrl} onClick={() => (window.location.hash = store.shareUrl)}>
+            <a
+              href={"#" + store.shareUrl}
+              onClick={() => (window.location.hash = store.shareUrl)}
+            >
               Share
             </a>
           </div>
-          <div className="buttons preview-navigation">
-            <a href="#" onClick={store.goFirst}>
-              ⇤
-            </a>
-            <a href="#" onClick={store.goPrevious}>
-              ←
-            </a>
-            <span>
-              {store.previewCount > 0 ? store.currentPreviewIndex + 1 : 0}
-              {" "}
-              of
-              {" "}
-              {store.previewCount}
-            </span>
-            <a href="#" onClick={store.goNext}>
-              →
-            </a>
-            <a href="#" onClick={store.goLast}>
-              ⇥
-            </a>
-          </div>
+          {store.previewMode !== "react"
+            ? <div className="buttons preview-navigation">
+                <a href="#" onClick={store.goFirst}>
+                  ⇤
+                </a>
+                <a href="#" onClick={store.goPrevious}>
+                  ←
+                </a>
+                <span>
+                  {store.previewCount > 0 ? store.currentPreviewIndex + 1 : 0}
+                  {" "}
+                  of
+                  {" "}
+                  {store.previewCount}
+                </span>
+                <a href="#" onClick={store.goNext}>
+                  →
+                </a>
+                <a href="#" onClick={store.goLast}>
+                  ⇥
+                </a>
+              </div>
+            : null}
           <div className="buttons preview-mode">
+            <a
+              href="#"
+              className={store.previewMode === "react" ? "active" : ""}
+              onClick={() => store.setPreviewMode("react")}
+            >
+              Preview
+            </a>
             <a
               href="#"
               className={store.previewMode === "snapshots" ? "active" : ""}
@@ -92,23 +128,30 @@ class App extends Component {
           <MonacoEditor
             width="100%"
             height="100%"
-            language="javascript"
+            language="typescript"
             value={store.code}
             onChange={store.setCode}
+            editorWillMount={this.editorWillMount}
             editorDidMount={this.editorDidMount}
           />
         </div>
         <div className="preview">
-          {store.currentPreview === null
-            ? null
-            : <MonacoEditor
-                language="json"
-                value={store.currentPreview}
-                options={{ readOnly: true }}
-                editorDidMount={this.viewerDidMount}
-              />}
+          {store.previewMode === "react"
+            ? this.state.preview
+            : store.currentPreview === null
+              ? null
+              : <MonacoEditor
+                  language="json"
+                  value={store.currentPreview}
+                  options={{ readOnly: true }}
+                  editorDidMount={this.viewerDidMount}
+                />}
           {store.logs.length > 0
-            ? <div className="logs">{store.logs.map(item => <div>{item.split("\n").map(t => <p>{t}</p>)}</div>)}</div>
+            ? <div className="logs">
+                {store.logs.map(item =>
+                  <div>{item.split("\n").map(t => <p>{t}</p>)}</div>
+                )}
+              </div>
             : null}
         </div>
       </div>

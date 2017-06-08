@@ -2,12 +2,14 @@ import { transform } from "babel-standalone";
 import { onAction, onPatch, onSnapshot, getSnapshot } from "mobx-state-tree";
 const MST = require("mobx-state-tree");
 const MobX = require("mobx");
+const React = require("react");
+const MobXReact = require("mobx-react");
 
 export function transpile(code) {
   let transformed = "";
   try {
     transformed = transform(code, {
-      presets: ["es2015"],
+      presets: ["es2015", "react"],
       filename: "repl",
       babelrc: false
     }).code;
@@ -22,9 +24,10 @@ export function transpile(code) {
   return transformed;
 }
 
-export function runCode(store) {
+export function runCode(store, render) {
   console.clear();
   store.clear();
+  render(null);
 
   let compiledCode = transpile(store.code);
   let sandboxConsole = Object.create(console);
@@ -59,7 +62,11 @@ export function runCode(store) {
       case "mobx":
         return MobX;
       case "mobx-state-tree-playground":
-        return { inspect: sandboxInspect };
+        return { inspect: sandboxInspect, render };
+      case "react":
+        return React;
+      case "mobx-react":
+        return MobXReact;
       default:
         throw new Error("Unable to find module " + mod);
     }

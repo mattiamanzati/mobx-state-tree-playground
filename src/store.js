@@ -1,7 +1,9 @@
 import { types as t, unprotect, protect } from "mobx-state-tree"
 
-const DEFAULT_CODE = `import { types } from "mobx-state-tree"
-import { inspect } from "mobx-state-tree-playground"
+const DEFAULT_CODE = `import React from "react"
+import { types } from "mobx-state-tree"
+import { observer } from "mobx-react"
+import { inspect, render } from "mobx-state-tree-playground"
 
 const AppModel = types.model({
     count: types.optional(types.number, 0)
@@ -17,15 +19,22 @@ const AppModel = types.model({
 const store = AppModel.create()
 inspect(store)
 
-store.increment()
-store.decrement()
-store.increment()
-`
+const App = observer(
+    props => <div>
+        My awesome counter: 
+        <button onClick={() => props.store.decrement()}>-</button> 
+        {props.store.count} 
+        <button onClick={() => props.store.increment()}>+</button> 
+    </div>
+)
+
+render(<App store={store} />)
+`;
 
 const AppStore = t.model({
     code: t.string,
 
-    previewMode: t.union(...['snapshots', 'patches', 'actions'].map(t.literal)),
+    previewMode: t.union(...['react', 'snapshots', 'patches', 'actions'].map(t.literal)),
     snapshots: t.array(t.frozen),
     patches: t.array(t.frozen),
     actions: t.array(t.frozen),
@@ -34,11 +43,11 @@ const AppStore = t.model({
     currentPreviewIndex: t.number,
 
     get currentPreview(){
-        return this[this.previewMode].length > 0 && this[this.previewMode].length > this.currentPreviewIndex ? JSON.stringify(this[this.previewMode][this.currentPreviewIndex], null, 4) : null
+        return this.previewMode !== 'react' && this[this.previewMode].length > 0 && this[this.previewMode].length > this.currentPreviewIndex ? JSON.stringify(this[this.previewMode][this.currentPreviewIndex], null, 4) : null
     },
 
     get previewCount() {
-        return this[this.previewMode].length
+        return this.previewMode === 'react' ? 0 : this[this.previewMode].length
     },
 
     get shareUrl() {
@@ -95,7 +104,7 @@ let code = window.location.hash.indexOf('src=') > 0 ? decodeURIComponent(window.
 
 export default AppStore.create({
     code,
-    previewMode: 'snapshots',
+    previewMode: 'react',
     currentPreviewIndex: 0,
     snapshots: [],
     patches: [],
