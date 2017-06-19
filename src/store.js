@@ -1,4 +1,4 @@
-import { types as t, unprotect, protect } from "mobx-state-tree"
+import { types as t } from "mobx-state-tree"
 
 const DEFAULT_CODE = `import React from "react"
 import { types } from "mobx-state-tree"
@@ -104,7 +104,7 @@ let code = window.location.hash.indexOf('src=') > 0 ? decodeURIComponent(window.
 
 export default AppStore.create({
     code,
-    previewMode: 'react',
+    previewMode: 'snapshots',
     currentPreviewIndex: 0,
     snapshots: [],
     patches: [],
