@@ -75,13 +75,9 @@ export function runCode(store, render) {
   let exports = {};
   // eslint-disable-next-line
   try {
-    new Function("exports", "require", "inspect", "console", compiledCode)(
-      exports,
-      sandboxRequire,
-      sandboxInspect,
-      sandboxConsole
-    );
-  } catch (e) {
+        // eslint-disable-next-line
+        new Function("exports", "require", "inspect", "console", compiledCode)(exports, sandboxRequire, sandboxInspect, sandboxConsole);
+      } catch (e) {
     sandboxConsole.error(e);
   }
 }

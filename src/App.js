@@ -60,24 +60,23 @@ class App extends Component {
       <div className="playground">
         <div className="toolbar">
           <div className="buttons run-code">
-            <a href="#" onClick={() => runCode(store, this.sandboxRender)}>
+            <button onClick={() => runCode(store, this.sandboxRender)}>
               Run ►
-            </a>
-            <a
-              href={"#" + store.shareUrl}
+            </button>
+            <button
               onClick={() => (window.location.hash = store.shareUrl)}
             >
               Share
-            </a>
+            </button>
           </div>
           {store.previewMode !== "react"
             ? <div className="buttons preview-navigation">
-                <a href="#" onClick={store.goFirst}>
+                <button onClick={store.goFirst}>
                   ⇤
-                </a>
-                <a href="#" onClick={store.goPrevious}>
+                </button>
+                <button onClick={store.goPrevious}>
                   ←
-                </a>
+                </button>
                 <span>
                   {store.previewCount > 0 ? store.currentPreviewIndex + 1 : 0}
                   {" "}
@@ -85,43 +84,39 @@ class App extends Component {
                   {" "}
                   {store.previewCount}
                 </span>
-                <a href="#" onClick={store.goNext}>
+                <button onClick={store.goNext}>
                   →
-                </a>
-                <a href="#" onClick={store.goLast}>
+                </button>
+                <button onClick={store.goLast}>
                   ⇥
-                </a>
+                </button>
               </div>
             : null}
           <div className="buttons preview-mode">
-            <a
-              href="#"
+            <button
               className={store.previewMode === "react" ? "active" : ""}
               onClick={() => store.setPreviewMode("react")}
             >
               Preview
-            </a>
-            <a
-              href="#"
+            </button>
+            <button
               className={store.previewMode === "snapshots" ? "active" : ""}
               onClick={() => store.setPreviewMode("snapshots")}
             >
               Snapshots
-            </a>
-            <a
-              href="#"
+            </button>
+            <button
               className={store.previewMode === "patches" ? "active" : ""}
               onClick={() => store.setPreviewMode("patches")}
             >
               Patches
-            </a>
-            <a
-              href="#"
+            </button>
+            <button
               className={store.previewMode === "actions" ? "active" : ""}
               onClick={() => store.setPreviewMode("actions")}
             >
               Actions
-            </a>
+            </button>
           </div>
         </div>
         <div className="code">
