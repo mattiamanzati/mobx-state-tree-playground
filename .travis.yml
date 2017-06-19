@@ -1,0 +1,11 @@
+language: node_js
+script: npm run build
+node_js:
+  - "6.10.1"
+deploy:
+ provider: pages
+ skip_cleanup: true
+ github_token: $GITHUB_TOKEN
+ local_dir: build
+ on:
+   branch: master
