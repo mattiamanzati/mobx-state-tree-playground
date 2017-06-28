@@ -16,7 +16,7 @@
     "react-monaco-editor": "^0.8.1"
   },
   "devDependencies": {
-    "react-scripts": "1.0.7"
+    "react-scripts": "1.0.8"
   },
   "scripts": {
     "start": "react-scripts start",
