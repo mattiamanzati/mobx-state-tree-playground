@@ -13,7 +13,7 @@
     "pretty-format": "^20.0.3",
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
-    "react-monaco-editor": "^0.8.1"
+    "react-monaco-editor": "^0.9.0"
   },
   "devDependencies": {
     "react-scripts": "1.0.10"
