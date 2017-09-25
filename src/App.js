@@ -63,35 +63,40 @@ class App extends Component {
             <button onClick={() => runCode(store, this.sandboxRender)}>
               Run ►
             </button>
-            <button
-              onClick={() => (window.location.hash = store.shareUrl)}
-            >
+            <button onClick={() => (window.location.hash = store.shareUrl)}>
               Share
             </button>
+            <button
+              onClick={() => {
+                store.setFontSize(-1);
+                this.editor.updateOptions({fontSize: store.fontSize})
+                this.viewer.updateOptions({readOnly: true, fontSize: store.fontSize})
+              }}
+            >
+              -
+            </button>
+            <button
+              onClick={() => {
+                store.setFontSize(1);
+                this.editor.updateOptions({fontSize: store.fontSize})
+                this.viewer.updateOptions({readOnly: true, fontSize: store.fontSize})
+              }}
+            >
+              +
+            </button>
           </div>
-          {store.previewMode !== "react"
-            ? <div className="buttons preview-navigation">
-                <button onClick={store.goFirst}>
-                  ⇤
-                </button>
-                <button onClick={store.goPrevious}>
-                  ←
-                </button>
-                <span>
-                  {store.previewCount > 0 ? store.currentPreviewIndex + 1 : 0}
-                  {" "}
-                  of
-                  {" "}
-                  {store.previewCount}
-                </span>
-                <button onClick={store.goNext}>
-                  →
-                </button>
-                <button onClick={store.goLast}>
-                  ⇥
-                </button>
-              </div>
-            : null}
+          {store.previewMode !== "react" ? (
+            <div className="buttons preview-navigation">
+              <button onClick={store.goFirst}>⇤</button>
+              <button onClick={store.goPrevious}>←</button>
+              <span>
+                {store.previewCount > 0 ? store.currentPreviewIndex + 1 : 0} of{" "}
+                {store.previewCount}
+              </span>
+              <button onClick={store.goNext}>→</button>
+              <button onClick={store.goLast}>⇥</button>
+            </div>
+          ) : null}
           <div className="buttons preview-mode">
             <button
               className={store.previewMode === "react" ? "active" : ""}
@@ -128,26 +133,27 @@ class App extends Component {
             onChange={store.setCode}
             editorWillMount={this.editorWillMount}
             editorDidMount={this.editorDidMount}
+            options={{ fontSize: store.fontSize }}
           />
         </div>
         <div className="preview">
-          {store.previewMode === "react"
-            ? this.state.preview
-            : store.currentPreview === null
-              ? null
-              : <MonacoEditor
-                  language="json"
-                  value={store.currentPreview}
-                  options={{ readOnly: true }}
-                  editorDidMount={this.viewerDidMount}
-                />}
-          {store.logs.length > 0
-            ? <div className="logs">
-                {store.logs.map(item =>
-                  <div>{item.split("\n").map(t => <p>{t}</p>)}</div>
-                )}
-              </div>
-            : null}
+          {store.previewMode === "react" ? (
+            this.state.preview
+          ) : store.currentPreview === null ? null : (
+            <MonacoEditor
+              language="json"
+              value={store.currentPreview}
+              options={{ readOnly: true, fontSize: store.fontSize }}
+              editorDidMount={this.viewerDidMount}
+            />
+          )}
+          {store.logs.length > 0 ? (
+            <div className="logs">
+              {store.logs.map(item => (
+                <div>{item.split("\n").map(t => <p>{t}</p>)}</div>
+              ))}
+            </div>
+          ) : null}
         </div>
       </div>
     );

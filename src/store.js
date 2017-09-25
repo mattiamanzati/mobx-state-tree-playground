@@ -7,14 +7,14 @@ import { inspect, render } from "mobx-state-tree-playground"
 
 const AppModel = types.model({
     count: types.optional(types.number, 0)
-}, {
+}).actions(self => ({
     increment(){
-        this.count++
+        self.count++
     },
 	decrement() {
-		this.count--
+		self.count--
 	}
-})
+}))
 
 const store = AppModel.create()
 inspect(store)
@@ -41,64 +41,70 @@ const AppStore = t.model({
     logs: t.array(t.string),
 
     currentPreviewIndex: t.number,
+    fontSize: t.optional(t.number, 18)
+}).views(self => ({
 
     get currentPreview(){
-        return this.previewMode !== 'react' && this[this.previewMode].length > 0 && this[this.previewMode].length > this.currentPreviewIndex ? JSON.stringify(this[this.previewMode][this.currentPreviewIndex], null, 4) : null
+        return self.previewMode !== 'react' && self[self.previewMode].length > 0 && self[self.previewMode].length > self.currentPreviewIndex ? JSON.stringify(self[self.previewMode][self.currentPreviewIndex], null, 4) : null
     },
 
     get previewCount() {
-        return this.previewMode === 'react' ? 0 : this[this.previewMode].length
+        return self.previewMode === 'react' ? 0 : self[self.previewMode].length
     },
 
     get shareUrl() {
-        return 'src=' + encodeURIComponent(this.code)
+        return 'src=' + encodeURIComponent(self.code)
     }
-}, {
+})).actions(self => ({
     setCode(code){
-        this.code = code
+        self.code = code
     },
 
     setPreviewMode(mode){
-        this.currentPreviewIndex = 0
-        this.previewMode = mode
-        this.goLast()
+        self.currentPreviewIndex = 0
+        self.previewMode = mode
+        self.goLast()
+    },
+
+    setFontSize(increase){
+        self.fontSize += increase
     },
 
     goFirst(){
-        this.currentPreviewIndex = 0
+        self.currentPreviewIndex = 0
     },
     goLast(){
-        this.currentPreviewIndex = this.previewCount > 0 ? this.previewCount - 1 : 0
+        self.currentPreviewIndex = self.previewCount > 0 ? self.previewCount - 1 : 0
     },
     goPrevious(){
-        this.currentPreviewIndex = this.currentPreviewIndex > 0 ? this.currentPreviewIndex - 1 : 0
+        self.currentPreviewIndex = self.currentPreviewIndex > 0 ? self.currentPreviewIndex - 1 : 0
     },
     goNext(){
-        this.currentPreviewIndex = this.currentPreviewIndex >= this.previewCount - 1 ? this.previewCount - 1 : this.currentPreviewIndex + 1
+        self.currentPreviewIndex = self.currentPreviewIndex >= self.previewCount - 1 ? self.previewCount - 1 : self.currentPreviewIndex + 1
     },
     clear(){
-        this.currentPreviewIndex = 0
-        this.snapshots = []
-        this.patches = []
-        this.actions = []
-        this.logs = []
+        self.currentPreviewIndex = 0
+        self.snapshots = []
+        self.patches = []
+        self.actions = []
+        self.logs = []
     },
     addSnapshot(snapshot) {
-        this.snapshots.push(snapshot)
-        this.goLast()
+        self.snapshots.push(snapshot)
+        self.goLast()
     },
     addPatch(patch){
-        this.patches.push(patch)
-        this.goLast()
+        self.patches.push(patch)
+        self.goLast()
     },
     addAction(action){
-        this.actions.push(action)
-        this.goLast()
+        self.actions.push(action)
+        self.goLast()
     },
     addLog(log) {
-        this.logs.push(log)
+        self.logs.push(log)
     }
-})
+}))
 
 let code = window.location.hash.indexOf('src=') > 0 ? decodeURIComponent(window.location.hash.substring(window.location.hash.indexOf('src=') + 'src='.length)) : DEFAULT_CODE
 
