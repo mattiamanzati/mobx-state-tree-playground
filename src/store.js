@@ -108,7 +108,7 @@ const AppStore = t.model({
 
 let code = window.location.hash.indexOf('src=') > 0 ? decodeURIComponent(window.location.hash.substring(window.location.hash.indexOf('src=') + 'src='.length)) : DEFAULT_CODE
 
-export default AppStore.create({
+const store = AppStore.create({
     code,
     previewMode: 'snapshots',
     currentPreviewIndex: 0,
@@ -117,3 +117,5 @@ export default AppStore.create({
     actions: [],
     logs: []
 })
+
+export default store

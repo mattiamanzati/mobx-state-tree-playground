@@ -1,5 +1,6 @@
 import { transform } from "babel-standalone";
 import { onAction, onPatch, onSnapshot, getSnapshot } from "mobx-state-tree";
+import { connectReduxDevtools } from "mobx-state-tree/middleware/redux"
 const MST = require("mobx-state-tree");
 const MobX = require("mobx");
 const React = require("react");
@@ -52,6 +53,7 @@ export function runCode(store, render) {
     onPatch(groundStore, store.addPatch);
     onAction(groundStore, store.addAction);
     store.addSnapshot(getSnapshot(groundStore));
+    connectReduxDevtools(require("remotedev"), groundStore)
     return groundStore;
   }
 
