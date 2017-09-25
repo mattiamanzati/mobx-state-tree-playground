@@ -66,6 +66,7 @@ class App extends Component {
             <button onClick={() => (window.location.hash = store.shareUrl)}>
               Share
             </button>
+            <span>Font Size:</span>
             <button
               onClick={() => {
                 store.setFontSize(-1);
