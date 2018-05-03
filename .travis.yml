@@ -2,6 +2,7 @@ language: node_js
 script: npm run build
 node_js:
   - "6.10.1"
+  - "10"
 deploy:
  provider: pages
  skip_cleanup: true
