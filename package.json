@@ -12,7 +12,7 @@
     "mobx-state-tree": "^1.0.0",
     "pretty-format": "^21.1.0",
     "react": "^16.8.0",
-    "react-dom": "^15.6.1",
+    "react-dom": "^16.8.0",
     "react-monaco-editor": "^0.10.0",
     "remotedev": "^0.2.7"
   },
