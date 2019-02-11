@@ -17,7 +17,7 @@
     "remotedev": "^0.2.7"
   },
   "devDependencies": {
-    "react-scripts": "1.0.13"
+    "react-scripts": "2.1.5"
   },
   "scripts": {
     "start": "react-scripts start",
